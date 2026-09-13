@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="classic">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Cuaca Lembang & Ciwidey: Kapan Waktu Terbaik ke Kawah Putih? | Tempera</title>
+<meta name="description" content="Panduan cuaca Lembang & Ciwidey yang evergreen + widget cuaca live update tiap 10 menit. Jam terbaik ke Kawah Putih biar gak kena kabut.">
+<link rel="stylesheet" href="../css/main.css">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#FFFBEB]">
+<nav class="fixed w-full z-50 bg-white/90 backdrop-blur-xl border-b px-4 py-3 flex justify-between items-center">
+<a href="../index.html" class="font-bold text-xl">TEMPERA</a>
+<a href="../index.html#pesan" class="bg-[#E5B80B] text-white px-5 py-2 rounded-full text-xs font-bold uppercase">Pesan Sekarang</a>
+</nav>
+<main class="pt-24 max-w-3xl mx-auto px-4 pb-24">
+<span class="text-[10px] uppercase tracking-widest bg-sky-100 text-sky-700 px-3 py-1 rounded-full">Panduan Evergreen + Live Widget</span>
+<h1 class="font-serif text-[32px] font-bold leading-tight mt-4">Panduan Cuaca Lembang & Ciwidey: Kapan Waktu Terbaik ke Kawah Putih?</h1>
+<p class="text-gray-600 mt-3 text-sm">Artikel ini sekali tulis tapi widget cuacanya update otomatis tiap 10 menit dari BMKG. Jadi gak perlu tulis ulang tiap hari.</p>
+
+<!-- LIVE WIDGET dari website utama -->
+<div id="liveCuacaBox" class="bg-white rounded-[24px] border-2 border-sky-200 p-6 mt-8 shadow">
+<h3 class="font-bold text-sm uppercase tracking-widest text-sky-600">⛅ Cuaca Live Hari Ini (Auto Update)</h3>
+<div id="weatherLive" class="grid grid-cols-2 gap-4 mt-4">
+<div class="bg-sky-50 rounded-xl p-4"><p class="text-xs text-gray-500">Lembang</p><p id="tempLembang" class="text-2xl font-bold">--°C</p><p id="descLembang" class="text-xs">Loading...</p></div>
+<div class="bg-amber-50 rounded-xl p-4"><p class="text-xs text-gray-500">Ciwidey</p><p id="tempCiwidey" class="text-2xl font-bold">--°C</p><p id="descCiwidey" class="text-xs">Loading...</p></div>
+</div>
+<p class="text-[10px] text-gray-400 mt-3">Source: Open-Meteo + BMKG • Update tiap 10 menit via js/weather.js</p>
+</div>
+
+<div class="prose mt-10">
+<h2 class="font-bold text-xl mt-8">Pola Cuaca yang Gak Berubah (Evergreen)</h2>
+<p>Ini yang kamu tulis sekali, berlaku selamanya:</p>
+<ul class="list-disc pl-6">
+<li><b>Lembang:</b> Pagi cerah 20-24°C, siang mendung, sore hujan jam 2-4. Suhu malam 18°C. Bawa jaket tipis.</li>
+<li><b>Ciwidey / Kawah Putih:</b> Pagi jam 7-10 cerah, jam 11 ke atas kabut tebal turun. Suhu 16-18°C. Jadi wajib berangkat jam 7 pagi.</li>
+<li><b>Pangalengan:</b> Mirip Ciwidey tapi lebih dingin & lebih sepi.</li>
+</ul>
+<h2 class="font-bold text-xl mt-8">Jam Terbaik ke Kawah Putih (Biar Gak Zonk)</h2>
+<p>90% orang Malaysia gagal foto Kawah Putih bagus karena datang jam 12 siang. Kabut sudah tutup. Solusi: Menginap di Ciwidey semalam, besoknya berangkat jam 7 pagi. Driver Tempera tahu jalan pintas biar gak macet.</p>
+
+<h2 class="font-bold text-xl mt-8">Kesimpulan</h2>
+<p>Jadi blog cuaca itu bukan nulis "Hari ini hujan". Tapi nulis <b>pola + tips + widget live</b>. Artikel sekali tulis, tapi widget-nya yang update tiap hari otomatis. Google suka karena artikelnya evergreen + ada live data.</p>
+</div>
+
+<div class="bg-gray-900 text-white rounded-[24px] p-6 mt-10 text-center">
+<p class="font-bold">Mau cek kondisi real sebelum berangkat?</p>
+<a href="../index.html#cuaca" class="inline-block mt-3 bg-sky-400 text-black font-bold px-6 py-2 rounded-full text-sm">Lihat Cuaca Live di Homepage</a>
+</div>
+</div>
+</main>
+<script src="../js/weather.js"></script>
+<script>
+// reuse fetchWeather from weather.js, but simple fallback
+if(typeof fetchWeather === 'function'){ fetchWeather(); setInterval(fetchWeather,600000); }
+</script>
+</body>
+</html>

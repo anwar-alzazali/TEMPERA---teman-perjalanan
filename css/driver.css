@@ -1,0 +1,20 @@
+/* driver.css - Tempera Driver Template */
+:root{
+  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);
+  --bg-main:#0A0A0A;--bg-card:#111111;--bg-card-hover:#1A1A1A;
+  --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#71717A;
+  --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg-main);color:var(--text-primary);font-family:'Inter',sans-serif;transition:all .3s}
+.font-serif{font-family:'Cormorant Garamond',serif}
+.gold-text{background:linear-gradient(to right,var(--accent),var(--accent-light));-webkit-background-clip:text;background-clip:text;color:transparent}
+.theme-card{background:var(--bg-card);border:1px solid var(--border-color);transition:all .3s}
+.theme-card:hover{border-color:var(--accent);box-shadow:0 8px 30px var(--accent-glow)}
+.locked-branding{position:relative}
+.locked-branding::after{content:'🔒 Kunci Tempera - Gak bisa dihapus';position:absolute;top:-18px;right:0;font-size:8px;background:#E5B80B;color:#000;padding:2px 6px;border-radius:99px;letter-spacing:0.05em}
+#tempera-footer{user-select:none;-webkit-user-select:none}
+#tempera-footer a{pointer-events:auto}
+.armada-img{aspect-ratio:16/10;object-fit:cover;border-radius:16px;width:100%}
+@keyframes wa-pulse-ring{0%{transform:scale(.8);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+.wa-pulse{position:absolute;inset:0;border-radius:9999px;background:#25D366;animation:wa-pulse-ring 2s cubic-bezier(.455,.03,.515,.955) infinite}
