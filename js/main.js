@@ -1,12 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. FITUR TOGGLE TEMA (DARK / LIGHT MODE)
+  // ==========================================
+  // 1. DATA ARMADA & RENDER DINAMIS
+  // ==========================================
+  const ARMADA_DATA = [
+    { id: 'calya', name: 'Toyota Calya / Sigra', badge: 'Ekonomis • 4 Nyaman', image: 'calya.jpg', capacityNum: 4, capacityMax: 6, baggage: '2 koper kabin kecil', price: 550000 },
+    { id: 'avanza', name: 'Toyota Avanza / Xenia New', badge: 'Paling Laris • 5 Nyaman', image: 'avanza.jpg', capacityNum: 5, capacityMax: 6, baggage: '1 besar + 2 kecil', price: 650000 },
+    { id: 'xpander', name: 'Mitsubishi Xpander', badge: 'MPV Nyaman • 6 Nyaman', image: 'xpander.jpg', capacityNum: 6, capacityMax: 7, baggage: '1 besar + 2 kecil', price: 800000 },
+    { id: 'innova', name: 'Toyota Innova Reborn', badge: 'Best Seller • 6 Nyaman', image: 'innova.jpg', capacityNum: 6, capacityMax: 7, baggage: '2 besar + 2 kecil', price: 950000 },
+    { id: 'hiace', name: 'Toyota Hiace Premio', badge: 'Premium • 11 Nyaman', image: 'hiace.jpg', capacityNum: 11, capacityMax: 14, baggage: '8-10 koper besar', price: 1600000 }
+  ];
+
+  function renderArmada() {
+    const cardsContainer = document.getElementById('armada-cards');
+    const tableBody = document.getElementById('armada-harga-body');
+
+    if (cardsContainer) {
+      cardsContainer.innerHTML = ARMADA_DATA.map(car => `
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-100 dark:border-slate-700 p-4 flex flex-col justify-between transition-colors">
+          <div>
+            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">${car.badge}</span>
+            <h3 class="font-bold text-gray-800 dark:text-gray-100 mt-2">${car.name}</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1"><i class="fa-solid fa-user-group text-indigo-500 mr-1"></i> Max ${car.capacityMax} Orang</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5"><i class="fa-solid fa-suitcase text-indigo-500 mr-1"></i> ${car.baggage}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
+            <span class="text-xs text-gray-500 dark:text-gray-400">Mulai dari</span>
+            <span class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">Rp ${car.price.toLocaleString('id-ID')}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    if (tableBody) {
+      tableBody.innerHTML = ARMADA_DATA.map(car => `
+        <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition">
+          <td class="py-3 px-4 font-semibold text-gray-800 dark:text-gray-200">${car.name}</td>
+          <td class="py-3 px-4 text-center dark:text-gray-300">${car.capacityNum} / ${car.capacityMax} Orang</td>
+          <td class="py-3 px-4 text-gray-600 dark:text-gray-400">${car.baggage}</td>
+          <td class="py-3 px-4 text-right font-bold text-indigo-600 dark:text-indigo-400">Rp ${car.price.toLocaleString('id-ID')}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // ==========================================
+  // 2. FITUR TOGGLE TEMA (DARK / LIGHT MODE)
+  // ==========================================
   const themeToggleBtn = document.getElementById("theme-toggle");
   
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", () => {
       document.documentElement.classList.toggle("dark");
       
-      // Ubah ikon bulan / matahari
       const icon = themeToggleBtn.querySelector("i");
       if (icon) {
         if (document.documentElement.classList.contains("dark")) {
@@ -18,7 +63,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. FITUR FORM PEMESANAN & KALKULATOR
+  // ==========================================
+  // 3. FITUR FORM PEMESANAN & KALKULATOR
+  // ==========================================
   const destinationSelect = document.getElementById("destination");
   const vehicleTypeSelect = document.getElementById("vehicleType");
   const passengersInput = document.getElementById("passengers");
@@ -66,7 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 3. FITUR CUACA BANDUNG LIVE
+  // ==========================================
+  // 4. FITUR CUACA BANDUNG LIVE
+  // ==========================================
   async function fetchWeather() {
     try {
       const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=-6.9175&longitude=107.6191&current_weather=true");
@@ -77,9 +126,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (tempEl) tempEl.textContent = `${Math.round(data.current_weather.temperature)}°C`;
         if (descEl) descEl.textContent = "Bandung Hari Ini";
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error("Gagal mengambil data cuaca:", err);
+    }
   }
 
+  // Inisialisasi awal saat dokumen selesai dimuat
+  renderArmada();
   fetchWeather();
   calculateTotal();
 });
