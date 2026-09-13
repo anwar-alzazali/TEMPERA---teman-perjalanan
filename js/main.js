@@ -1,72 +1,85 @@
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. FITUR TOGGLE TEMA (DARK / LIGHT MODE)
+  const themeToggleBtn = document.getElementById("theme-toggle");
+  
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+      
+      // Ubah ikon bulan / matahari
+      const icon = themeToggleBtn.querySelector("i");
+      if (icon) {
+        if (document.documentElement.classList.contains("dark")) {
+          icon.className = "fa-solid fa-sun text-yellow-400";
+        } else {
+          icon.className = "fa-solid fa-moon text-yellow-400";
+        }
+      }
+    });
+  }
 
-function getSystemMode(){const h=new Date().getHours();return (h>=19||h<5)?'dark':'light';}
-function setMode(mode){document.documentElement.setAttribute('data-mode', mode); localStorage.setItem('tempera_mode', mode); const icon=document.getElementById('darkModeIcon'); if(icon) icon.textContent = mode==='dark'?'☀️':'🌙';}
-function toggleDarkMode(){const cur=document.documentElement.getAttribute('data-mode'); const next=cur==='dark'?'light':'dark'; setMode(next);}
+  // 2. FITUR FORM PEMESANAN & KALKULATOR
+  const destinationSelect = document.getElementById("destination");
+  const vehicleTypeSelect = document.getElementById("vehicleType");
+  const passengersInput = document.getElementById("passengers");
+  const totalPriceEl = document.getElementById("totalPrice");
+  const bookingForm = document.getElementById("bookingForm");
 
-// === CONFIG FINAL - TIDAK BENTROK ===
-const THEMES={classic:{name:'Classic Luxury',icon:'✨'},sky:{name:'Sky Blue Bright',icon:'☀️'},tropical:{name:'Tropical Paradise',icon:'🌴'},mountain:{name:'Adventure Mountain',icon:'🏔️'},ocean:{name:'Ocean Blue Explorer',icon:'🌊'},sunset:{name:'Sunset Wanderlust',icon:'🌅'},minimal:{name:'Minimalist',icon:'⚪'},heritage:{name:'Royal Heritage',icon:'👑'}};
-const LOGO_MAP={classic:'assets/logos/logo_classic_gold_transparent.png',sky:'assets/logos/logo_sky_blue_transparent.png',tropical:'assets/logos/logo_tropical_transparent.png',mountain:'assets/logos/logo_mountain_transparent.png',ocean:'assets/logos/logo_ocean_transparent.png',sunset:'assets/logos/logo_sunset_transparent.png',minimal:'assets/logos/logo_minimal_transparent.png',heritage:'assets/logos/logo_heritage_transparent.png'};
-const TRANSLATIONS={id:{nav_home:"Beranda"},en:{nav_home:"Home"},ms:{nav_home:"Laman Utama"}};
-let currentLang=localStorage.getItem('tempera_lang')||'id';
-let userManuallyChangedTheme = localStorage.getItem('tempera_manual')==='1';
-function isNightNow(){const h=new Date().getHours();return h>=19||h<5;}
-function themeByTime(){const h=new Date().getHours();if(h>=5&&h<7)return'sunset';if(h>=7&&h<10)return'sky';if(h>=10&&h<13)return'tropical';if(h>=13&&h<15)return'mountain';if(h>=15&&h<17)return'minimal';if(h>=17&&h<19)return'heritage';if(h>=19&&h<22)return'sunset';return'classic';}
-function setTheme(themeKey){
-  const theme=THEMES[themeKey]||THEMES.classic;
-  document.documentElement.setAttribute('data-theme',themeKey);
-  localStorage.setItem('tempera_theme_black',themeKey);
-  document.getElementById('currentThemeIcon').innerText=theme.icon;
-  document.getElementById('currentThemeName').innerText=theme.name;
-  document.querySelectorAll('.theme-option').forEach(btn=>{
-    if(btn.dataset.themeBtn===themeKey){btn.style.background='var(--bg-section-alt)';btn.style.borderColor='var(--border-color)';}
-    else{btn.style.background='transparent';btn.style.borderColor='transparent';}
-  });
-  // dark mode terpisah
-  const file=LOGO_MAP[themeKey]||LOGO_MAP.classic;
-  const ml=document.getElementById('mainLogo'); if(ml) ml.src=file;
-  const fl=document.getElementById('footerLogo'); if(fl) fl.src=file;
-  if(window.lastWeatherIsDay!==undefined) applyWeatherThemeAdaptive(window.lastWeatherIsDay, window.lastWeatherCode||0);
-}
-function setThemeManual(k){ userManuallyChangedTheme=true; localStorage.setItem('tempera_manual','1'); setTheme(k); document.getElementById('themeMenu').classList.add('hidden'); }
-function toggleThemeMenu(e){e.stopPropagation();document.getElementById('themeMenu').classList.toggle('hidden');document.getElementById('langMenu').classList.add('hidden');}
-function toggleDropdown(e){e.stopPropagation();document.getElementById('langMenu').classList.toggle('hidden');document.getElementById('themeMenu').classList.add('hidden');}
-function toggleMobileMenu(e){if(e)e.stopPropagation();document.getElementById('mobileMenu').classList.toggle('hidden');}
-function closeMobileMenu(){document.getElementById('mobileMenu')?.classList.add('hidden');}
-function handlePesanSekarang(e){if(e)e.preventDefault();document.getElementById('pesan').scrollIntoView({behavior:'smooth'});}
-function changeLanguage(lang){currentLang=lang;localStorage.setItem('tempera_lang',lang);applyLanguage(lang);document.getElementById('langMenu').classList.add('hidden');}
-function applyLanguage(lang){const map={id:'🇮🇩',en:'🇬🇧',ms:'🇲🇾'};const lab={id:'ID',en:'EN',ms:'MY'};document.getElementById('currentLangFlag').innerText=map[lang];document.getElementById('currentLang').innerText=lab[lang];document.querySelectorAll('#langMenu [data-lang]').forEach(b=>{const c=b.querySelector('.check');if(b.dataset.lang===lang){b.style.background='var(--bg-section-alt)';c.classList.remove('hidden')}else{b.style.background='transparent';c.classList.add('hidden')}});}
-window.addEventListener('click',()=>{document.getElementById('langMenu')?.classList.add('hidden');document.getElementById('themeMenu')?.classList.add('hidden');});
-// BUILD THEME MENU
-(function(){const list=document.getElementById('themeMenuList');Object.keys(THEMES).forEach(k=>{const t=THEMES[k];const btn=document.createElement('button');btn.setAttribute('data-theme-btn',k);btn.className='theme-option w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left border';btn.style.borderColor='transparent';btn.onclick=()=>setThemeManual(k);btn.innerHTML=`<span>${t.icon}</span><div class="flex-1"><p class="text-[11px] font-bold">${t.name}</p></div>`;list.appendChild(btn);});})();
+  const baseRates = { regular: 80000, private: 350000, hiace: 900000 };
+  const areaSurcharges = { "Bandung Kota": 0, "Lembang": 25000, "Ciwidey": 50000, "Pangalengan": 50000 };
 
-// ARMADA + DESTINASI + FORM + CUACA (pakai logic lama kamu tapi versi clean tanpa bentrok)
-const ARMADA_DATA=[{id:'calya',name:'Toyota Calya / Sigra',shortName:'Calya / Sigra',badge:'Ekonomis • 4 Nyaman',image:'assets/images/calya-black-gold.jpg',images:['assets/images/calya-black-gold.jpg','assets/images/calya-white.jpg'],capacityNum:4,capacityMax:6,baggage:'2 koper kabin kecil',maxInfo:'Max 6 tanpa bagasi',note:'⚠️ Tidak muat 6 + koper besar',price:550000},{id:'avanza',name:'Toyota Avanza / Xenia New',shortName:'Avanza New',badge:'Paling Laris • 5 Nyaman',image:'assets/images/avanza-black-gold.jpg',images:['assets/images/avanza-black-gold.jpg','assets/images/avanza-white.jpg'],capacityNum:5,capacityMax:6,baggage:'1 besar + 2 kecil',maxInfo:'Max 6',note:'✅ Muat stroller',price:650000},{id:'xpander',name:'Mitsubishi Xpander',shortName:'Xpander',badge:'MPV Nyaman • 6 Nyaman',image:'assets/images/xpander-black.jpg',images:['assets/images/xpander-black.jpg'],capacityNum:6,capacityMax:7,baggage:'1 besar + 2 kecil',maxInfo:'Max 7',note:'✅ Kabin lega',price:800000},{id:'innova',name:'Toyota Innova Reborn / Zenix',shortName:'Innova Reborn',badge:'Best Seller • 6 Nyaman',image:'assets/images/innova-black-gold.jpg',images:['assets/images/innova-black-gold.jpg'],capacityNum:6,capacityMax:7,baggage:'2 besar + 2 kecil',maxInfo:'Max 7',note:'✅ Rekom luar kota',price:950000},{id:'hiace',name:'Toyota Hiace Premio',shortName:'Hiace Premio',badge:'Premium • 11 Nyaman',image:'assets/images/hiace-black-gold.jpg',images:['assets/images/hiace-black-gold.jpg'],capacityNum:11,capacityMax:14,baggage:'8-10 koper besar',maxInfo:'Max 14',note:'ℹ️ 12 orang lipat kursi',price:1600000}];
-const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse","Orchid Forest","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch","Grafika Cikole","Maribaya","Fairy Garden","Kebun Strawberry"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut","Lawangwangi","Bukit Bintang","Gedung Sate, Braga","Trans Studio"],ciwidey:["Kawah Putih","Ranca Upas","Situ Patenggang","Glamping Lakeside","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto"],pangalengan:["Nimo Highland","Situ Cileunca","Wayang Windu","Pineus Tilu","Sunrise Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
-function formatPrice(p){return 'Rp '+p.toLocaleString('id-ID');}
-function getSelectedArmada(){const s=document.getElementById('calcUnit');if(!s||!s.value||s.selectedIndex<=0)return null;const o=s.options[s.selectedIndex];return{id:o.dataset.id,name:o.dataset.name,cap:parseInt(o.dataset.cap)||0,capmax:parseInt(o.dataset.capmax)||0,price:parseInt(o.value)||0};}
-function selectUnitFromCard(id){const s=document.getElementById('calcUnit');for(let i=0;i<s.options.length;i++){if(s.options[i].dataset.id===id){s.selectedIndex=i;break;}}calculateLive();checkCapacityLive();document.getElementById('pesan').scrollIntoView({behavior:'smooth'});}
-function renderArmada(){const cards=document.getElementById('armada-cards');const tbody=document.getElementById('armada-harga-body');const sel=document.getElementById('calcUnit');const destWrapper=document.getElementById('destinasi-wrapper');cards.innerHTML='';tbody.innerHTML='';sel.innerHTML='';destWrapper.innerHTML='';Object.keys(DESTINASI_DATA).forEach(g=>{const w=document.createElement('div');w.className='rounded-xl border overflow-hidden';w.style.background='var(--bg-section-alt)';w.style.borderColor='var(--border-soft)';w.innerHTML=`<button type="button" onclick="toggleAccordion('${g}')" class="w-full flex items-center justify-between p-4 text-sm font-semibold"><span>${g.toUpperCase()}</span><span id="count-${g}" class="text-[10px] px-2 py-1 rounded-full font-bold" style="background:var(--accent-glow);color:var(--accent)">0 dipilih</span></button><div id="acc-${g}" class="accordion-content"><div class="p-4 pt-0"><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="dest-${g}"></div></div></div>`;destWrapper.appendChild(w);const cont=w.querySelector(`#dest-${g}`);cont.innerHTML=DESTINASI_DATA[g].map(v=>`<label class="flex gap-2 items-center cursor-pointer border rounded-xl p-2" style="border-color:var(--border-soft)"><input type="checkbox" name="destinasi" data-group="${g}" value="${v}" class="w-4 h-4"> <span>${v}</span></label>`).join('');});document.querySelectorAll('input[name="destinasi"]').forEach(cb=>cb.addEventListener('change',calculateLive));const ph=document.createElement('option');ph.value="";ph.textContent="— Pilih Armada Dulu —";ph.disabled=true;ph.selected=true;sel.appendChild(ph);ARMADA_DATA.forEach(unit=>{const card=document.createElement('div');card.className='armada-card-uniform rounded-[24px] overflow-hidden flex flex-col h-full theme-card border';card.innerHTML=`<div class="h-48 bg-black relative overflow-hidden"><img src="${unit.image}" class="w-full h-full object-contain p-2"><div class="absolute top-3 left-3 px-3 py-1 rounded-full" style="background:var(--accent);color:white"><span class="text-[9px] font-bold uppercase">${unit.badge}</span></div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold">${unit.name}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${unit.capacityNum} Nyaman • Max ${unit.capacityMax}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="border-color:var(--border-soft)"><li>👥 ${unit.capacityNum} + driver • Max ${unit.capacityMax}</li><li>🧳 ${unit.baggage}</li><li>${unit.note}</li></ul><button type="button" onclick="selectUnitFromCard('${unit.id}')" class="block text-center w-full font-bold py-3 rounded-full text-[10px]" style="background:var(--accent);color:white">Pilih - ${formatPrice(unit.price)} / 12 Jam</button></div>`;cards.appendChild(card);const tr=document.createElement('tr');tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${unit.name}</td><td class="py-5 px-6 text-center"><b>${unit.capacityNum}</b> / Max ${unit.capacityMax}</td><td class="py-5 px-6 text-xs">${unit.baggage}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">${formatPrice(unit.price)}</td><td class="py-5 px-6 text-center"><button onclick="selectUnitFromCard('${unit.id}')" class="border text-[10px] px-4 py-1.5 rounded-full">Pilih</button></td>`;tbody.appendChild(tr);const opt=document.createElement('option');opt.value=unit.price;opt.dataset.id=unit.id;opt.dataset.name=unit.shortName;opt.dataset.cap=unit.capacityNum;opt.dataset.capmax=unit.capacityMax;opt.textContent=`${unit.name} - ${formatPrice(unit.price)}`;sel.appendChild(opt);});}
-function toggleAccordion(g){const c=document.getElementById('acc-'+g);const isOpen=c.classList.contains('open');document.querySelectorAll('.accordion-content').forEach(x=>x.classList.remove('open'));if(!isOpen)c.classList.add('open');}
-function focusRegion(r){toggleAccordion(r);}
-function checkCapacityLive(){const j=parseInt(document.getElementById('formJumlah').value)||0;const info=document.getElementById('resCapacityInfo');const txt=document.getElementById('resCapacityText');if(j<=0||!info||!txt){if(info)info.classList.add('hidden');return false;}const armada=getSelectedArmada();if(!armada){info.classList.add('hidden');return false;}info.classList.remove('hidden');if(j<=armada.cap){txt.innerHTML=`<span style="color:#059669">✅ ${j} orang muat nyaman</span>`;return false;}else if(j<=armada.capmax){txt.innerHTML=`<span style="color:#D97706">⚠️ ${j} orang melebihi nyaman (${armada.cap})</span>`;return 'over_comfort';}else{txt.innerHTML=`<span style="color:#DC2626">🚫 ${j} orang melebihi MAX ${armada.capmax}</span>`;return 'over_max';}}
-function calculateLive(){const sel=document.getElementById('calcUnit');const base=parseInt(sel.value)||0;const hasArmada=sel.value&&sel.selectedIndex>0;const l=document.querySelectorAll('input[name="destinasi"][data-group="lembang"]:checked');const d=document.querySelectorAll('input[name="destinasi"][data-group="dago"]:checked');const c=document.querySelectorAll('input[name="destinasi"][data-group="ciwidey"]:checked');const p=document.querySelectorAll('input[name="destinasi"][data-group="pangalengan"]:checked');document.getElementById('count-lembang').innerText=`${l.length} dipilih`;document.getElementById('count-dago').innerText=`${d.length} dipilih`;document.getElementById('count-ciwidey').innerText=`${c.length} dipilih`;document.getElementById('count-pangalengan').innerText=`${p.length} dipilih`;const hasUtara=l.length>0||d.length>0;const hasCiwidey=c.length>0;const hasPangalengan=p.length>0;let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;let cost=0;let labelCost="";if(regionCount>1){cost=(regionCount-1)*200000;labelCost=` (+ 200k x ${regionCount-1})`;}const armada=getSelectedArmada();if(!hasArmada){document.getElementById('resArmadaName').innerText='Belum dipilih';document.getElementById('resBasePrice').innerText='Rp 0';document.getElementById('resTotalPrice').innerText='Rp 0';document.getElementById('resGrandTotal').innerText='Rp 0';document.getElementById('mobileArmadaName').innerText='Belum dipilih';document.getElementById('mobileTotalPrice').innerText='Rp 0';document.getElementById('mobileStickyBar').classList.add('hidden');}else{document.getElementById('resArmadaName').innerText=armada.name;document.getElementById('resArmadaCap').innerText=`${armada.cap} Nyaman • Max ${armada.capmax}`;document.getElementById('resBasePrice').innerText='Rp '+base.toLocaleString('id-ID');document.getElementById('resRegionCost').innerText='Rp '+cost.toLocaleString('id-ID');document.getElementById('resRegionLabel').innerText=labelCost;document.getElementById('resTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');document.getElementById('resGrandTotal').innerText='Rp '+(base+cost+100000).toLocaleString('id-ID');document.getElementById('mobileArmadaName').innerText=armada.name;document.getElementById('mobileTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');document.getElementById('mobileStickyBar').classList.remove('hidden');}const listEl=document.getElementById('resSelectedList');const all=document.querySelectorAll('input[name="destinasi"]:checked');if(all.length==0)listEl.innerText='Belum ada';else{let g={};all.forEach(cb=>{if(!g[cb.dataset.group])g[cb.dataset.group]=[];g[cb.dataset.group].push(cb.value);});let t='';for(let k in g){t+=`${k.toUpperCase()}: ${g[k].join(', ')} | `;}listEl.innerText=t.slice(0,-3);}const warn=document.getElementById('crossTripWarning');if(regionCount>=2){warn.classList.remove('hidden');document.getElementById('warningTitle').innerText=`⚠️ Cross ${regionCount} Wilayah - Rp ${cost.toLocaleString('id-ID')}`;document.getElementById('warningDesc').innerText='Biaya lintas wilayah karena harus lewat pusat kota.';document.getElementById('warningDetails').innerHTML=`<li>Cross fee: Rp ${cost.toLocaleString('id-ID')}</li>`;}else warn.classList.add('hidden');}
-function normalizeWA(input){let num=input.replace(/[^0-9]/g,'');if(num.startsWith('0'))num='62'+num.substring(1);if(num.startsWith('8'))num='62'+num;return num;}
-function handleFormSubmit(e){e.preventDefault();const nama=document.getElementById('formNama').value.trim();const kontak=normalizeWA(document.getElementById('formKontak').value.trim());const sel=document.getElementById('calcUnit');if(!sel.value){alert('Pilih armada dulu!');return;}const hargaDasar=parseInt(sel.value);const jumlah=parseInt(document.getElementById('formJumlah').value)||0;const tanggal=document.getElementById('formTanggal').value,jam=document.getElementById('formJam').value,catatan=document.getElementById('formCatatan').value;const checked=document.querySelectorAll('input[name="destinasi"]:checked');if(checked.length==0){alert('Pilih minimal satu destinasi!');return;}const armada=getSelectedArmada();if(jumlah>armada.capmax){alert(`Melebihi MAX ${armada.capmax}`);return;}let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]};checked.forEach(cb=>{by[cb.dataset.group].push(cb.value);});let regionCount=0;if(by.lembang.length||by.dago.length)regionCount++;if(by.ciwidey.length)regionCount++;if(by.pangalengan.length)regionCount++;let biaya=regionCount>1?(regionCount-1)*200000:0;let ruteTeks='';if(by.lembang.length)ruteTeks+=`\n- Lembang: ${by.lembang.join(', ')}`;if(by.dago.length)ruteTeks+=`\n- Dago: ${by.dago.join(', ')}`;if(by.ciwidey.length)ruteTeks+=`\n- Ciwidey: ${by.ciwidey.join(', ')}`;if(by.pangalengan.length)ruteTeks+=`\n- Pangalengan: ${by.pangalengan.join(', ')}`;let msg=`Halo Admin Tempera, saya ingin memesan:\n\n* NAMA: ${nama}\n* KONTAK: ${kontak}\n* ARMADA: ${armada.name}\n* DESTINASI:${ruteTeks}\n\nRINCIAN:\n- Armada: Rp ${hargaDasar.toLocaleString('id-ID')}${biaya>0?`\n- Cross: Rp ${biaya.toLocaleString('id-ID')}`:''}\nTOTAL: Rp ${(hargaDasar+biaya).toLocaleString('id-ID')}\n\n* PESERTA: ${jumlah}\n* TANGGAL: ${tanggal}\n* JAM: ${jam}\n* CATATAN: ${catatan}`;window.open(`https://wa.me/6285174352575?text=${encodeURIComponent(msg)}`,'_blank');}
-function closeCapacityModal(){document.getElementById('capacityModal').classList.add('hidden');}
+  function calculateTotal() {
+    if (!vehicleTypeSelect || !totalPriceEl) return;
+    const vehicle = vehicleTypeSelect.value;
+    const dest = destinationSelect ? destinationSelect.value : "Bandung Kota";
+    const passengers = parseInt(passengersInput ? passengersInput.value : 1) || 1;
 
-// CUACA FINAL - tanpa lottie berat, pakai emoji
-const BANDUNG_LAT=-6.9175; const BANDUNG_LON=107.6191; const LOCATIONS={lembang:{name:'Lembang',lat:-6.8107,lon:107.6167,alt:'1200 mdpl'},ciwidey:{name:'Ciwidey',lat:-7.1,lon:107.45,alt:'1500 mdpl'},pangalengan:{name:'Pangalengan',lat:-7.2,lon:107.57,alt:'1600 mdpl'}};
-function getWeatherType(code){if(code===0) return 'sunny'; if([1,2].includes(code)) return 'partly'; if(code===3) return 'cloudy'; if([45,48].includes(code)) return 'fog'; if([51,53,55,56,57].includes(code)) return 'drizzle'; if([61,63,65,80,81,82].includes(code)) return 'rain'; if([95,96,99].includes(code)) return 'thunder'; return 'partly';}
-function getWeatherIcon(code,isDay){const t=getWeatherType(code); if(t==='sunny') return isDay?'☀️':'🌙'; if(t==='partly') return isDay?'🌤️':'☁️'; if(t==='cloudy') return '☁️'; if(t==='fog') return '🌫️'; if(t==='drizzle') return '🌦️'; if(t==='rain') return '🌧️'; if(t==='thunder') return '⛈️'; return '⛅';}
-function getWeatherDesc(code){const m={0:'Cerah',1:'Cerah Berawan',2:'Berawan Sebagian',3:'Mendung',45:'Berkabut',48:'Kabut Tebal',51:'Gerimis Ringan',53:'Gerimis',55:'Gerimis Lebat',61:'Hujan Ringan',63:'Hujan Sedang',65:'Hujan Lebat',80:'Hujan Ringan',81:'Hujan Sedang',82:'Hujan Lebat',95:'Petir',96:'Petir + Hujan',99:'Badai Petir'}; return m[code]||'Berawan';}
-function renderWeatherFX(type){const fx=document.getElementById('weather-fx'); if(!fx) return; fx.innerHTML=''; if(type==='rain'){for(let i=0;i<35;i++){const d=document.createElement('div');d.className='rain-drop';d.style.left=Math.random()*100+'%';d.style.animationDuration=(0.6+Math.random()*0.8)+'s';fx.appendChild(d);}} else if(type==='drizzle'){for(let i=0;i<20;i++){const d=document.createElement('div');d.className='drizzle-drop';d.style.left=Math.random()*100+'%';d.style.animationDuration=(1+Math.random())+'s';fx.appendChild(d);}}}
-function applyWeatherThemeAdaptive(isDay,code){window.lastWeatherIsDay=isDay; window.lastWeatherCode=code; const type=getWeatherType(code); const themeKey=document.documentElement.getAttribute('data-theme')||'classic'; const card=document.getElementById('weather-main-card'); if(!card) return; renderWeatherFX(type);}
-async function fetchWeather(){try{const url=`https://api.open-meteo.com/v1/forecast?latitude=${BANDUNG_LAT}&longitude=${BANDUNG_LON}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,is_day&daily=sunrise,sunset&timezone=Asia%2FJakarta&forecast_days=2`;const res=await fetch(url);const data=await res.json();const curr=data.current;const hourly=data.hourly;const isDay=curr.is_day===1;const code=curr.weather_code;applyWeatherThemeAdaptive(isDay,code);document.getElementById('weather-temp').innerText=Math.round(curr.temperature_2m);document.getElementById('weather-desc').innerText=getWeatherDesc(code);document.getElementById('weather-feel').innerText=`Feels ${Math.round(curr.apparent_temperature)}° • ${curr.precipitation>0?curr.precipitation+'mm ':''}${getWeatherDesc(code)}`;document.getElementById('weather-lottie-main').innerText=getWeatherIcon(code,isDay);document.getElementById('weather-humidity').innerText=curr.relative_humidity_2m+'%';document.getElementById('weather-wind').innerText=Math.round(curr.wind_speed_10m)+' km/h';document.getElementById('weather-daynight').innerText=isDay?'☀️ Siang':'🌙 Malam';document.getElementById('weather-time').innerText=new Date().toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'})+' WIB • Live';const hourlyContainer=document.getElementById('weather-hourly');hourlyContainer.innerHTML='';let startIdx=0;for(let i=0;i<data.hourly.time.length;i++){if(new Date(data.hourly.time[i])>=new Date()){startIdx=i;break;}}for(let i=startIdx;i<Math.min(startIdx+12,data.hourly.time.length);i++){const icon=getWeatherIcon(hourly.weather_code[i],hourly.is_day[i]===1);const temp=Math.round(hourly.temperature_2m[i]);const hourLabel=new Date(data.hourly.time[i]).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});const el=document.createElement('div');el.className='min-w-[68px] rounded-2xl p-2.5 text-center border';el.style.background='var(--bg-card)';el.style.borderColor='var(--border-soft)';el.innerHTML=`<p class="text-[10px]" style="color:var(--text-muted)">${i===startIdx?'Now':hourLabel}</p><div class="text-[18px] my-1">${icon}</div><p class="text-[12px] font-bold">${temp}°</p>`;hourlyContainer.appendChild(el);}Object.keys(LOCATIONS).forEach(async key=>{try{const loc=LOCATIONS[key];const u=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,weather_code,is_day&timezone=Asia%2FJakarta`;const r=await fetch(u);const d=await r.json();const card=document.getElementById('card-'+key);if(!card) return;const ic=getWeatherIcon(d.current.weather_code,d.current.is_day===1);card.innerHTML=`<div><p class="font-bold text-[13px]">${loc.name}</p><p class="text-[10px]" style="color:var(--text-muted)">${loc.alt} • ${getWeatherDesc(d.current.weather_code)}</p></div><div class="text-right"><div class="text-[22px]">${ic}</div><p class="font-bold text-[16px]">${Math.round(d.current.temperature_2m)}°</p></div>`;}catch(e){}});}catch(err){document.getElementById('weather-temp').innerText='24';document.getElementById('weather-lottie-main').innerText='☀️';}}
+    let base = baseRates[vehicle] || 80000;
+    let surcharge = areaSurcharges[dest] || 0;
+    let total = (vehicle === "regular") ? (base + surcharge) * passengers : base + surcharge;
 
-window.addEventListener('DOMContentLoaded',()=>{
-  const savedTheme = localStorage.getItem('tempera_theme_black');
-  if(savedTheme) setTheme(savedTheme); else setTheme(themeByTime());
-  applyLanguage(currentLang); renderArmada(); calculateLive();
-  const today=new Date().toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} document.getElementById('footerYear').innerText=new Date().getFullYear();
-  toggleAccordion('lembang'); fetchWeather(); setInterval(fetchWeather,600000);
+    totalPriceEl.textContent = `Rp ${total.toLocaleString("id-ID")}`;
+  }
+
+  if (destinationSelect) destinationSelect.addEventListener("change", calculateTotal);
+  if (vehicleTypeSelect) vehicleTypeSelect.addEventListener("change", calculateTotal);
+  if (passengersInput) passengersInput.addEventListener("input", calculateTotal);
+
+  if (bookingForm) {
+    bookingForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pickup = document.getElementById("pickup") ? document.getElementById("pickup").value : "-";
+      const destination = destinationSelect.value;
+      const passengers = passengersInput.value;
+      const vehicle = vehicleTypeSelect.options[vehicleTypeSelect.selectedIndex].text;
+      const total = totalPriceEl.textContent;
+
+      const phoneNumber = "085174352575";
+      const text = `Halo, saya ingin memesan travel TEMPERA:\n\n` +
+        `*Jemput:* ${pickup}\n` +
+        `*Tujuan:* ${destination}\n` +
+        `*Armada:* ${vehicle}\n` +
+        `*Penumpang:* ${passengers} Orang\n` +
+        `*Total Biaya:* ${total}\n\nMohon konfirmasinya!`;
+
+      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`, "_blank");
+    });
+  }
+
+  // 3. FITUR CUACA BANDUNG LIVE
+  async function fetchWeather() {
+    try {
+      const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=-6.9175&longitude=107.6191&current_weather=true");
+      const data = await res.json();
+      if (data.current_weather) {
+        const tempEl = document.getElementById("weather-temp");
+        const descEl = document.getElementById("weather-desc");
+        if (tempEl) tempEl.textContent = `${Math.round(data.current_weather.temperature)}°C`;
+        if (descEl) descEl.textContent = "Bandung Hari Ini";
+      }
+    } catch (err) {}
+  }
+
+  fetchWeather();
+  calculateTotal();
 });
